@@ -1,0 +1,54 @@
+﻿@page "/marks/details/{id:int}"
+@using WebApp.Data.DAL
+@using WebApp.Data.Models
+@inject MyMarksContext DB
+@inject NavigationManager NavigationManager
+
+<PageTitle>Details</PageTitle>
+
+<h1>Details</h1>
+
+<div>
+    <h4>Movie</h4>
+    <hr />
+    @if (Evaluation is null)
+    {
+        <p><em>Loading...</em></p>
+    }
+    else {
+        <dl class="row">
+            @* <dt class="col-sm-2">Title</dt>
+            <dd class="col-sm-10">@movie.Title</dd>
+            <dt class="col-sm-2">Release date</dt>
+            <dd class="col-sm-10">@movie.ReleaseDate</dd>
+            <dt class="col-sm-2">Genre</dt>
+            <dd class="col-sm-10">@movie.Genre</dd>
+            <dt class="col-sm-2">Price</dt>
+            <dd class="col-sm-10">@movie.Price</dd> *@
+        </dl>
+        <div>
+            <a href="@Edit.Url(Evaluation)">Edit</a> |
+            <a href="marks">Back to List</a>
+        </div>
+    }
+</div>
+
+@code {
+    public static string Url(EvaluationItem movie) =>
+        $"marks/details/{Uri.EscapeDataString(movie.EvaluationItemId.ToString())}";
+
+    EvaluationItem? Evaluation;
+
+    [Parameter]
+    public int Id { get; set; }
+
+    protected override void OnInitialized()
+    {
+        Evaluation = DB.EvaluationItems.FirstOrDefault(m => m.EvaluationItemId == Id);
+
+        if (Evaluation is null)
+        {
+            NavigationManager.NavigateTo("notfound");
+        }
+    }
+}

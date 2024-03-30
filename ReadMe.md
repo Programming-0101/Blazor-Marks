@@ -20,6 +20,8 @@ dotnet ef database update
 
 ----
 
-## Credits
+## Credits/Resources
 
 - [Using Entity Framework Core and SQLite in Blazor](https://www.allhandsontech.com/programming/blazor/how-to-sqlite-blazor/)
+- [CRUD w/ Blazor in .NET 8 🔥 All Render Modes (SSR, Server, Wasm, Auto), Entity Framework & SQL Server](https://youtu.be/w8imy7LT9zY?si=EP6TA3iGeAj1i9gZ) (1 hr, 32 min)
+- [Dan Roth's Blazor Scaffolding](https://github.com/danroth27/BlazorScaffolding) (garnished/adapted the *Movies* CRUD pages for Marks)

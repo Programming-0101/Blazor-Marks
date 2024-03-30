@@ -1,0 +1,31 @@
+﻿@page "/marks"
+@using Microsoft.AspNetCore.Components.QuickGrid
+@using WebApp.Data.DAL
+@inject MyMarksContext DB
+@rendermode InteractiveServer
+@attribute [StreamRendering]
+
+<PageTitle>Index</PageTitle>
+
+<h1>Index</h1>
+
+<p>
+    <a href="marks/create">Create New</a>
+</p>
+
+<QuickGrid Class="table" Items="DB.EvaluationItems" Pagination="pagination">
+    <PropertyColumn Property="item => item.Course.Number" Title="Course #" />
+    <PropertyColumn Property="item => item.Name" Title="Evaluation"/>
+    <PropertyColumn Property="item => item.Weight" />
+    @* <TemplateColumn>
+        <a href="@Edit.Url(context)">Edit</a> |
+        <a href="@Details.Url(context)">Details</a> |
+        <a href="@Delete.Url(context)">Delete</a>
+    </TemplateColumn> *@
+</QuickGrid>
+
+<Paginator State="pagination" />
+
+@code {
+    PaginationState pagination = new() { ItemsPerPage = 10 };
+}
