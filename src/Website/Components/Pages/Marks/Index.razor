@@ -1,7 +1,8 @@
 ﻿@page "/marks"
 @using Microsoft.AspNetCore.Components.QuickGrid
-@using WebApp.Data.DAL
-@inject MyMarksContext DB
+@using WebApp.Data.Models
+@using WebApp.Data.BLL
+@inject GradingServices Grades
 @rendermode InteractiveServer
 @attribute [StreamRendering]
 
@@ -13,7 +14,7 @@
     <a href="marks/create">Create New</a>
 </p>
 
-<QuickGrid Class="table" Items="DB.EvaluationItems" Pagination="pagination">
+<QuickGrid Class="table" Items="EvaluationItems" Pagination="pagination">
     <PropertyColumn Property="item => item.Course.Number" Title="Course #" />
     <PropertyColumn Property="item => item.Name" Title="Evaluation"/>
     <PropertyColumn Property="item => item.Weight" />
@@ -28,4 +29,9 @@
 
 @code {
     PaginationState pagination = new() { ItemsPerPage = 10 };
+    private IQueryable<EvaluationItem> EvaluationItems { get; set; }
+    protected override void OnInitialized()
+    {
+        EvaluationItems = Grades.GetAllEvaluationItems().AsQueryable();
+    }
 }
