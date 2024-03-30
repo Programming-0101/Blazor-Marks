@@ -18,7 +18,7 @@ namespace WebApp.Data.Migrations
                         .Annotation("Sqlite:Autoincrement", true),
                     Number = table.Column<string>(type: "TEXT", nullable: false),
                     Name = table.Column<string>(type: "TEXT", nullable: false),
-                    Credits = table.Column<int>(type: "INTEGER", nullable: false),
+                    Credits = table.Column<double>(type: "REAL", nullable: false),
                     IsFinished = table.Column<bool>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
@@ -50,8 +50,8 @@ namespace WebApp.Data.Migrations
                     Name = table.Column<string>(type: "TEXT", nullable: false),
                     Weight = table.Column<int>(type: "INTEGER", nullable: false),
                     CourseId = table.Column<int>(type: "INTEGER", nullable: false),
-                    PossibleMarks = table.Column<int>(type: "INTEGER", nullable: true),
-                    EarnedMarks = table.Column<int>(type: "INTEGER", nullable: true),
+                    PossibleMarks = table.Column<double>(type: "REAL", nullable: true),
+                    EarnedMarks = table.Column<double>(type: "REAL", nullable: true),
                     EvaluationGroupId = table.Column<int>(type: "INTEGER", nullable: true)
                 },
                 constraints: table =>

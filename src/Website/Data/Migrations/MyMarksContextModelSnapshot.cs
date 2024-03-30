@@ -23,8 +23,8 @@ namespace WebApp.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<int>("Credits")
-                        .HasColumnType("INTEGER");
+                    b.Property<double>("Credits")
+                        .HasColumnType("REAL");
 
                     b.Property<bool>("IsFinished")
                         .HasColumnType("INTEGER");
@@ -72,8 +72,8 @@ namespace WebApp.Data.Migrations
                     b.Property<int>("CourseId")
                         .HasColumnType("INTEGER");
 
-                    b.Property<int?>("EarnedMarks")
-                        .HasColumnType("INTEGER");
+                    b.Property<double?>("EarnedMarks")
+                        .HasColumnType("REAL");
 
                     b.Property<int?>("EvaluationGroupId")
                         .HasColumnType("INTEGER");
@@ -82,8 +82,8 @@ namespace WebApp.Data.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<int?>("PossibleMarks")
-                        .HasColumnType("INTEGER");
+                    b.Property<double?>("PossibleMarks")
+                        .HasColumnType("REAL");
 
                     b.Property<int>("Weight")
                         .HasColumnType("INTEGER");
