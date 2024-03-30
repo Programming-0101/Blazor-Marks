@@ -26,3 +26,4 @@ dotnet ef database update
 - [CRUD w/ Blazor in .NET 8 🔥 All Render Modes (SSR, Server, Wasm, Auto), Entity Framework & SQL Server](https://youtu.be/w8imy7LT9zY?si=EP6TA3iGeAj1i9gZ) (1 hr, 32 min)
 - [Dan Roth's Blazor Scaffolding](https://github.com/danroth27/BlazorScaffolding) (garnished/adapted the *Movies* CRUD pages for Marks)
 - [Learn Entity Framework Core](https://www.learnentityframeworkcore.com/) *(and the [`[NotMapped]` attribute](https://www.learnentityframeworkcore.com/configuration/data-annotation-attributes/notmapped-attribute))*
+- Some images from [Blazor.net](https://blazor.net)
