@@ -1,8 +1,12 @@
+using Microsoft.EntityFrameworkCore;
 using WebApp.Components;
+using WebApp.Data.DAL;
 
 var builder = WebApplication.CreateBuilder(args);
+var connectionString = builder.Configuration.GetConnectionString("MyDb");
 
 // Add services to the container.
+builder.Services.AddDbContextFactory<MyMarksContext>(options => options.UseSqlite(connectionString));
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 
