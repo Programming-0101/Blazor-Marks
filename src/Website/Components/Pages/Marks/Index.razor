@@ -18,18 +18,18 @@
     <PropertyColumn Property="item => item.Course.Number" Title="Course #" />
     <PropertyColumn Property="item => item.Name" Title="Evaluation"/>
     <PropertyColumn Property="item => item.Weight" />
-    @* <TemplateColumn>
+    <PropertyColumn Property="item => item.Percentage" />
+    <TemplateColumn>
         <a href="@Edit.Url(context)">Edit</a> |
         <a href="@Details.Url(context)">Details</a> |
-        <a href="@Delete.Url(context)">Delete</a>
-    </TemplateColumn> *@
+    </TemplateColumn>
 </QuickGrid>
 
 <Paginator State="pagination" />
 
 @code {
     PaginationState pagination = new() { ItemsPerPage = 10 };
-    private IQueryable<EvaluationItem> EvaluationItems { get; set; }
+    private IQueryable<EvaluationItem>? EvaluationItems { get; set; }
     protected override void OnInitialized()
     {
         EvaluationItems = Grades.GetAllEvaluationItems().AsQueryable();

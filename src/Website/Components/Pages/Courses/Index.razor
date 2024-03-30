@@ -1,0 +1,145 @@
+@page "/courses"
+@rendermode InteractiveServer
+@using Microsoft.AspNetCore.Components.QuickGrid
+@using WebApp.Data.Models
+@using WebApp.Data.BLL
+@inject CourseServices CourseManager
+
+<h1>Courses</h1>
+
+<div>@UserFeedback</div>
+
+<QuickGrid Items="AllCourses">
+    <PropertyColumn Property="item => item.CourseId" Title="Course ID" />
+    <PropertyColumn Property="@(item => item.Name)" Title="Course Name" />
+    <PropertyColumn Property="@(item => item.Number)" Title="Course Number" />
+    <PropertyColumn Property="@(item => item.Credits)" Title="Credits" />
+    <PropertyColumn Property="@(item => item.EvaluationItems.Count)" Title="Evaluation Items" />
+    <TemplateColumn>
+        <button @onclick="() => RemoveCourse(context.CourseId)">Delete</button>
+    </TemplateColumn>
+</QuickGrid>
+
+<EditForm Model="NewCourse" OnValidSubmit="CreateCourse">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+    <fieldset class="grid">
+        <legend>
+            New Course
+            <button disabled="@(!IsComplete())">Create</button>
+        </legend>
+        <label>Course Number
+            <InputText @bind-Value="NewCourse!.Number" />
+        </label>
+
+        <label>Course Name
+            <InputText @bind-Value="NewCourse!.Name" />
+        </label>
+
+        <label>Credits
+            <InputSelect @bind-Value="NewCourse.Credits">
+                <option value="3">3</option>
+                <option value="4.5">4.5</option>
+            </InputSelect>
+        </label>
+    </fieldset>
+</EditForm>
+
+@if(IsStartingNewCourse())
+{
+    <EditForm Model="NewCourse!.EvaluationItems">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
+        <fieldset>
+            <legend>
+                Evaluation Items
+                <button type="button" @onclick="AddItem">Add Item</button>
+            </legend>
+            @foreach (var item in NewCourse!.EvaluationItems)
+            {
+                <fieldset class="grid">
+                    <label>Item Name
+                        <InputText @bind-Value="item.Name" />
+                    </label>
+                    <label>Item Weight
+                        <InputNumber @bind-Value="item.Weight" @onchange="() => StateHasChanged()" />
+                    </label>
+                    <button type="button" @onclick="() => NewCourse!.EvaluationItems.Remove(item)">Remove</button>
+                </fieldset>
+            }
+        </fieldset>
+    </EditForm>
+}
+
+@code {
+    private IQueryable<Course>? AllCourses { get; set; }
+    private Course? NewCourse { get; set; }
+    private string? UserFeedback { get; set; }
+
+    protected override void OnInitialized()
+    {
+        AllCourses = CourseManager.GetAllCourses().AsQueryable();
+        NewCourse = new Course();
+    }
+
+    private bool IsStartingNewCourse()
+    {
+        return !string.IsNullOrWhiteSpace(NewCourse?.Number) && !string.IsNullOrWhiteSpace(NewCourse?.Name) && NewCourse?.Credits > 0;
+    }
+
+    private bool IsComplete()
+    {
+        return IsStartingNewCourse() && NewCourse?.EvaluationItems.Sum(x => x.Weight) == 100 && !HasInvalidItem();
+    }
+
+    private bool HasInvalidItem()
+    {
+        return NewCourse?.EvaluationItems.Any(x => string.IsNullOrWhiteSpace(x.Name) || x.Weight <= 0) ?? false;
+    }
+
+    private void AddItem()
+    {
+        NewCourse!.EvaluationItems.Add(new EvaluationItem());
+    }
+
+    private void CreateCourse()
+    {
+        try
+        {
+            CourseManager.AddCourse(NewCourse!);
+            UserFeedback = "Course created";
+            NewCourse = new Course();
+            AllCourses = CourseManager.GetAllCourses().AsQueryable();
+        }
+        catch (Exception ex)
+        {
+            UserFeedback = ex.Message;
+        }
+    }
+    private void RemoveCourse(int courseId)
+    {
+        try
+        {
+            CourseManager.DeleteCourse(courseId);
+            AllCourses = CourseManager.GetAllCourses().AsQueryable();
+            UserFeedback = $"Course {courseId} deleted";
+        }
+        catch (Exception ex)
+        {
+            UserFeedback = ex.Message;
+        }
+    }
+}
+
+<blockquote>
+    <h4>Diagnostics</h4>
+    <ul>
+        <li>IsStartingNewCourse: @IsStartingNewCourse()</li>
+        <li>IsComplete: @IsComplete()</li>
+        <li>Course Number: @NewCourse?.Number</li>
+        <li>Course Name: @NewCourse?.Name</li>
+        <li>Credits: @NewCourse?.Credits</li>
+        <li>Evaluation Items: @NewCourse?.EvaluationItems.Count</li>
+        <li>Total Weight: @NewCourse?.EvaluationItems.Sum(x => x.Weight)</li>
+    </ul>
+</blockquote>
