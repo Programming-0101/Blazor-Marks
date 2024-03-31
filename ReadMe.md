@@ -18,6 +18,14 @@ dotnet ef migrations add InitialCreate -o Data/Migrations
 dotnet ef database update
 ```
 
+## Running the App
+
+When you run the app, it's going to make changes to the database contents. Because the database is included in the repository, you might want to either make a "backup" before you run the app or you might want to mark that file as being "ignored" by git for updates.
+
+```ps
+git update-index --assume-unchanged src/Website/Data/myMarks.db
+```
+
 ----
 
 ## Credits/Resources
