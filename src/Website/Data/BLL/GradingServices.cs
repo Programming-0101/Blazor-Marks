@@ -18,6 +18,13 @@ public class GradingServices
 
     public EvaluationItem? GetEvaluationItem(int id)
     {
-        return _context.EvaluationItems.Find(id);
+        // return _context.EvaluationItems.Find(id);
+        return _context.EvaluationItems.Include(x => x.Course).FirstOrDefault(x => x.EvaluationItemId == id);
+    }
+
+    public void UpdateMark(EvaluationItem item)
+    {
+        _context.EvaluationItems.Update(item);
+        _context.SaveChanges();
     }
 }

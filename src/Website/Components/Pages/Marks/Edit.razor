@@ -1,15 +1,15 @@
 ﻿@page "/marks/edit/{id:int}"
-@using WebApp.Data.DAL
+@rendermode InteractiveServer
+@using WebApp.Data.BLL
 @using WebApp.Data.Models
-@using Microsoft.EntityFrameworkCore
-@inject MyMarksContext DB
+@inject GradingServices DB
 @inject NavigationManager NavigationManager
 
 <PageTitle>Edit</PageTitle>
 
 <h1>Edit</h1>
 
-<h4>Movie</h4>
+<h4>Mark for <u>@Evaluation?.Name</u> in <i>@Evaluation?.Course.Name</i></h4>
 <hr />
 @if (Evaluation is null)
 {
@@ -17,36 +17,33 @@
 }
 else
 {
-    <div class="row">
-        <div class="col-md-4">
-            <EditForm method="post" Model="Evaluation" OnValidSubmit="UpdateMark" FormName="edit">
-                <DataAnnotationsValidator />
-                <ValidationSummary />
-                @* <input type="hidden" name="Movie.Id" value="@Movie.Id" />
-                <div class="mb-3">
-                    <label for="title" class="form-label">Title:</label>
-                    <InputText id="title" @bind-Value="Movie.Title" class="form-control" />
-                    <ValidationMessage For="() => Movie.Title" class="text-danger" />
-                </div>
-                <div class="mb-3">
-                    <label for="release-date" class="form-label">Release date:</label>
-                    <InputDate id="release-date" @bind-Value="Movie.ReleaseDate" class="form-control" />
-                    <ValidationMessage For="() => Movie.ReleaseDate" class="text-danger" />
-                </div>
-                <div class="mb-3">
-                    <label for="genre" class="form-label">Genre:</label>
-                    <InputText id="genre" @bind-Value="Movie.Genre" class="form-control" />
-                    <ValidationMessage For="() => Movie.Genre" class="text-danger" />
-                </div>
-                <div class="mb-3">
-                    <label for="price" class="form-label">Price:</label>
-                    <InputNumber id="price" @bind-Value="Movie.Price" min="0" step="0.01" class="form-control" />
-                    <ValidationMessage For="() => Movie.Price" class="text-danger" />
-                </div> *@
-                <button type="submit" class="btn btn-primary">Save</button>
-            </EditForm>
-        </div>
-    </div>
+    <EditForm method="post" Model="Evaluation" OnValidSubmit="UpdateMark" FormName="edit">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
+        <input type="hidden" id="title" @bind="Evaluation.EvaluationItemId" />
+        <input type="hidden" id="title" @bind="Evaluation.CourseId" />
+        <fieldset class="grid">
+            <label>Name
+                <InputText disabled id="title" @bind-Value="Evaluation.Name" />
+            </label>
+            <label>Weight
+                <InputNumber disabled id="title" @bind-Value="Evaluation.Weight" />
+            </label>
+        </fieldset>
+        <fieldset class="grid">
+            <label>Possible
+                <InputNumber id="title" @bind-Value="Evaluation.PossibleMarks" autofocus />
+            </label>
+            <label>Earned
+                <InputNumber id="title" @bind-Value="Evaluation.EarnedMarks" />
+            </label>
+        </fieldset>
+        <fieldset class="grid">
+            <button type="submit">Save</button>
+            <button type="button" @onclick="ClearMarks">Clear</button>
+        </fieldset>
+    </EditForm>
+    <text>@UserFeedback</text>
 }
 
 <div>
@@ -62,10 +59,13 @@ else
 
     [SupplyParameterFromForm]
     public EvaluationItem? Evaluation { get; set; }
+    public Course? Course { get; set; }
+
+    private string UserFeedback { get; set; } = string.Empty;
 
     protected override void OnInitialized()
     {
-        Evaluation ??= DB.EvaluationItems.FirstOrDefault(m => m.EvaluationItemId == Id);
+        Evaluation ??= DB.GetEvaluationItem(Id);
 
         if (Evaluation is null)
         {
@@ -77,29 +77,21 @@ else
     // For more details, see https://aka.ms/RazorPagesCRUD.
     public void UpdateMark()
     {
-        DB.Attach(Evaluation!).State = EntityState.Modified;
-
         try
         {
-            DB.SaveChanges();
+            DB.UpdateMark(Evaluation!);
+            UserFeedback = $"Mark updated successfully! You got {Evaluation!.EarnedMarks} out of {Evaluation.PossibleMarks} for a mark of {Evaluation.Percentage}%!";
         }
-        catch (DbUpdateConcurrencyException)
+        catch (Exception ex)
         {
-            if (!MovieExists(Evaluation!.EvaluationItemId))
-            {
-                NavigationManager.NavigateTo("notfound");
-            }
-            else
-            {
-                throw;
-            }
+            UserFeedback = $"Error: {ex.Message}";
         }
-
-        NavigationManager.NavigateTo("marks");
     }
 
-    bool MovieExists(int id)
+    private void ClearMarks()
     {
-        return DB.EvaluationItems.Any(e => e.EvaluationItemId == id);
+        Evaluation!.EarnedMarks = null;
+        Evaluation!.PossibleMarks = null;
+        UserFeedback = "Marks cleared!";
     }
 }
